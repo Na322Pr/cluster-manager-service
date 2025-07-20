@@ -38,6 +38,7 @@ type Task struct {
 	Name      string
 	Driver    string
 	Config    map[string]interface{}
+	Env       map[string]string
 	Resources Resources
 	Services  []Service
 }
@@ -100,6 +101,7 @@ func (j *NomadJob) ConvertToNomadJob() *api.Job {
 				Name:   t.Name,
 				Driver: t.Driver,
 				Config: t.Config,
+				Env:    t.Env,
 				Resources: &api.Resources{
 					//CPU:      intToPtr(t.Resources.CPU * 100), // Convert cores to MHz
 					CPU:      intToPtr(t.Resources.CPU),
@@ -180,7 +182,11 @@ func NewSampleCluster() *Cluster {
 						Ports: []Port{
 							{
 								Label: "http",
-								To:    8080,
+								To:    7000,
+							},
+							{
+								Label: "grpc",
+								To:    7001,
 							},
 						},
 					},
@@ -189,8 +195,14 @@ func NewSampleCluster() *Cluster {
 							Name:   "server",
 							Driver: "docker",
 							Config: map[string]interface{}{
-								"image": "na322pr/test-service:latest",
+								"image": "na322pr/kv-storage-service:latest",
 								"ports": []string{"http"},
+							},
+							Env: map[string]string{
+								"NODE_ID":    "${NOMAD_ALLOC_INDEX}",
+								"GRPC_PORT":  "${NOMAD_PORT_grpc}",
+								"HTTP_PORT":  "${NOMAD_PORT_http}",
+								"SEED_NODES": "go-service-0.service.consul:8080,go-service-1.service.consul:8080",
 							},
 							Resources: Resources{
 								CPU:    5,

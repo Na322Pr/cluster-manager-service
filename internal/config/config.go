@@ -12,12 +12,12 @@ import (
 )
 
 type Config struct {
-	GRPC `yaml:"grpc"`
+	GRPC `yaml:"grpc" env-required:"true"`
 }
 
 type GRPC struct {
-	Host string `yaml:"host" env:"GRPC_HOST"`
-	Port int    `yaml:"port" env:"GRPC_PORT"`
+	Host string `yaml:"host" env:"GRPC_HOST" env-default:"0.0.0.0"`
+	Port int    `yaml:"port" env:"GRPC_PORT" env-required:"true"`
 }
 
 var (
@@ -26,14 +26,21 @@ var (
 )
 
 func MustLoad() *Config {
-
 	once.Do(func() {
+		configInstance = &Config{}
+		var err error
+
+		err = cleanenv.ReadEnv(configInstance)
+		if err == nil {
+			log.Println("config loaded from environment variables")
+			return
+		}
+
 		configPath := fetchConfigPath()
 		if configPath == "" {
 			log.Fatal("config path is empty")
 		}
 
-		var err error
 		configInstance, err = LoadPath(configPath)
 		if err != nil {
 			log.Fatalf("failed to load config: %v", err)
