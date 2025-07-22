@@ -55,11 +55,14 @@ type Service struct {
 }
 
 type ServiceCheck struct {
-	Name     string
-	Type     string
-	Path     string
-	Interval time.Duration
-	Timeout  time.Duration
+	Name        string
+	Type        string
+	Path        string
+	Interval    time.Duration
+	Timeout     time.Duration
+	GrpcService string
+	GrpcUseTLS  bool
+	PortLabel   string
 }
 
 func (j *NomadJob) ConvertToNomadJob() *api.Job {
@@ -79,7 +82,6 @@ func (j *NomadJob) ConvertToNomadJob() *api.Job {
 		}
 
 		// Convert Network if it exists
-
 		nomadNetwork := &api.NetworkResource{
 			DynamicPorts: []api.Port{},
 		}
@@ -91,7 +93,6 @@ func (j *NomadJob) ConvertToNomadJob() *api.Job {
 			}
 			nomadNetwork.DynamicPorts = append(nomadNetwork.DynamicPorts, nomadPort)
 		}
-
 		nomadTG.Networks = []*api.NetworkResource{nomadNetwork}
 
 		// Convert Tasks
@@ -103,7 +104,6 @@ func (j *NomadJob) ConvertToNomadJob() *api.Job {
 				Config: t.Config,
 				Env:    t.Env,
 				Resources: &api.Resources{
-					//CPU:      intToPtr(t.Resources.CPU * 100), // Convert cores to MHz
 					CPU:      intToPtr(t.Resources.CPU),
 					MemoryMB: intToPtr(t.Resources.Memory),
 				},
@@ -117,16 +117,20 @@ func (j *NomadJob) ConvertToNomadJob() *api.Job {
 					PortLabel: s.PortLabel,
 				}
 
-				// Convert ServiceChecks
+				// Convert ServiceChecks with gRPC support
 				var nomadChecks []api.ServiceCheck
 				for _, sc := range s.Checks {
-					nomadChecks = append(nomadChecks, api.ServiceCheck{
-						Name:     sc.Name,
-						Type:     sc.Type,
-						Path:     sc.Path,
-						Interval: sc.Interval,
-						Timeout:  sc.Timeout,
-					})
+					nomadCheck := api.ServiceCheck{
+						Name:        sc.Name,
+						Type:        sc.Type,
+						Path:        sc.Path,
+						Interval:    sc.Interval,
+						Timeout:     sc.Timeout,
+						PortLabel:   sc.PortLabel,
+						GRPCService: sc.GrpcService,
+						GRPCUseTLS:  sc.GrpcUseTLS,
+					}
+					nomadChecks = append(nomadChecks, nomadCheck)
 				}
 				nomadService.Checks = nomadChecks
 				nomadServices = append(nomadServices, nomadService)
@@ -196,13 +200,13 @@ func NewSampleCluster() *Cluster {
 							Driver: "docker",
 							Config: map[string]interface{}{
 								"image": "na322pr/kv-storage-service:latest",
-								"ports": []string{"http"},
+								"ports": []string{"grpc"},
 							},
 							Env: map[string]string{
 								"NODE_ID":    "${NOMAD_ALLOC_INDEX}",
 								"GRPC_PORT":  "${NOMAD_PORT_grpc}",
 								"HTTP_PORT":  "${NOMAD_PORT_http}",
-								"SEED_NODES": "go-service-0.service.consul:8080,go-service-1.service.consul:8080",
+								"SEED_NODES": "go-service-0.service.consul:7001,go-service-1.service.consul:7001",
 							},
 							Resources: Resources{
 								CPU:    5,
@@ -211,14 +215,16 @@ func NewSampleCluster() *Cluster {
 							Services: []Service{
 								{
 									Name:      "go-service",
-									PortLabel: "http",
+									PortLabel: "grpc",
 									Checks: []ServiceCheck{
 										{
-											Name:     "http-check",
-											Type:     "http",
-											Path:     "/",
-											Interval: 10 * time.Second,
-											Timeout:  2 * time.Second,
+											Name:        "grpc-health-check",
+											Type:        "grpc",
+											PortLabel:   "grpc",
+											Interval:    15 * time.Second,
+											Timeout:     5 * time.Second,
+											GrpcService: "kv_storage_service.KeyValueStorage",
+											GrpcUseTLS:  false,
 										},
 									},
 								},

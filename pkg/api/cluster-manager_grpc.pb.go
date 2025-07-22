@@ -20,15 +20,14 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ClusterManager_SetNodeCount_FullMethodName = "/cluster_manager_service.ClusterManager/SetNodeCount"
-	ClusterManager_SetNodeVote_FullMethodName  = "/cluster_manager_service.ClusterManager/SetNodeVote"
 )
 
 // ClusterManagerClient is the client API for ClusterManager service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ClusterManagerClient interface {
+	// Изменяет количество нод в кластере
 	SetNodeCount(ctx context.Context, in *SetNodeCountRequest, opts ...grpc.CallOption) (*SetNodeCountResponse, error)
-	SetNodeVote(ctx context.Context, in *SetNodeVoteRequest, opts ...grpc.CallOption) (*SetNodeVoteResponse, error)
 }
 
 type clusterManagerClient struct {
@@ -49,22 +48,12 @@ func (c *clusterManagerClient) SetNodeCount(ctx context.Context, in *SetNodeCoun
 	return out, nil
 }
 
-func (c *clusterManagerClient) SetNodeVote(ctx context.Context, in *SetNodeVoteRequest, opts ...grpc.CallOption) (*SetNodeVoteResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetNodeVoteResponse)
-	err := c.cc.Invoke(ctx, ClusterManager_SetNodeVote_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ClusterManagerServer is the server API for ClusterManager service.
 // All implementations must embed UnimplementedClusterManagerServer
 // for forward compatibility.
 type ClusterManagerServer interface {
+	// Изменяет количество нод в кластере
 	SetNodeCount(context.Context, *SetNodeCountRequest) (*SetNodeCountResponse, error)
-	SetNodeVote(context.Context, *SetNodeVoteRequest) (*SetNodeVoteResponse, error)
 	mustEmbedUnimplementedClusterManagerServer()
 }
 
@@ -77,9 +66,6 @@ type UnimplementedClusterManagerServer struct{}
 
 func (UnimplementedClusterManagerServer) SetNodeCount(context.Context, *SetNodeCountRequest) (*SetNodeCountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetNodeCount not implemented")
-}
-func (UnimplementedClusterManagerServer) SetNodeVote(context.Context, *SetNodeVoteRequest) (*SetNodeVoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetNodeVote not implemented")
 }
 func (UnimplementedClusterManagerServer) mustEmbedUnimplementedClusterManagerServer() {}
 func (UnimplementedClusterManagerServer) testEmbeddedByValue()                        {}
@@ -120,24 +106,6 @@ func _ClusterManager_SetNodeCount_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ClusterManager_SetNodeVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetNodeVoteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ClusterManagerServer).SetNodeVote(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ClusterManager_SetNodeVote_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ClusterManagerServer).SetNodeVote(ctx, req.(*SetNodeVoteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ClusterManager_ServiceDesc is the grpc.ServiceDesc for ClusterManager service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -148,10 +116,6 @@ var ClusterManager_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetNodeCount",
 			Handler:    _ClusterManager_SetNodeCount_Handler,
-		},
-		{
-			MethodName: "SetNodeVote",
-			Handler:    _ClusterManager_SetNodeVote_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

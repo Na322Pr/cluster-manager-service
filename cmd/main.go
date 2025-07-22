@@ -7,6 +7,7 @@ import (
 	"github.com/Na322Pr/cluster-manager-service/internal/config"
 	"github.com/Na322Pr/cluster-manager-service/internal/service"
 	desc "github.com/Na322Pr/cluster-manager-service/pkg/api"
+	consul "github.com/hashicorp/consul/api"
 	"go.uber.org/zap"
 	"os"
 
@@ -41,9 +42,10 @@ func main() {
 		zap.String("grpcAddress", grpcAddress),
 	)
 
+	consulClient, _ := consul.NewClient(consul.DefaultConfig())
 	nomadClient, _ := nomad.NewClient(&nomad.Config{Address: "http://localhost:4646"})
 
-	cmService := service.NewClusterManagerService(grpcAddress, nomadClient, logger)
+	cmService := service.NewClusterManagerService(grpcAddress, consulClient, nomadClient, logger)
 	cmApp := cluster_manager_service.NewImplementation(cmService)
 
 	lis, err := net.Listen("tcp", grpcAddress)

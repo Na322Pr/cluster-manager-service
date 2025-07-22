@@ -5,6 +5,7 @@ import (
 	"github.com/Na322Pr/cluster-manager-service/internal/model"
 	"go.uber.org/zap"
 
+	consul "github.com/hashicorp/consul/api"
 	nomad "github.com/hashicorp/nomad/api"
 )
 
@@ -12,16 +13,23 @@ type ClusterManagerService struct {
 	cluster  *model.Cluster
 	election *model.Election
 
-	nomadClient *nomad.Client
-	logger      *zap.Logger
+	consulClient *consul.Client
+	nomadClient  *nomad.Client
+	logger       *zap.Logger
 }
 
-func NewClusterManagerService(selfAddress string, nomadClient *nomad.Client, logger *zap.Logger) *ClusterManagerService {
+func NewClusterManagerService(
+	selfAddress string,
+	consulClient *consul.Client,
+	nomadClient *nomad.Client,
+	logger *zap.Logger,
+) *ClusterManagerService {
 	return &ClusterManagerService{
-		cluster:     model.NewSampleCluster(),
-		election:    model.NewElection(selfAddress),
-		logger:      logger,
-		nomadClient: nomadClient,
+		cluster:      model.NewSampleCluster(),
+		election:     model.NewElection(selfAddress),
+		consulClient: consulClient,
+		nomadClient:  nomadClient,
+		logger:       logger,
 	}
 }
 
@@ -35,13 +43,15 @@ func (s *ClusterManagerService) RunCluster() error {
 func (s *ClusterManagerService) SetClusterSize(_ context.Context, size int) error {
 	s.cluster.SetClusterSize(size)
 
+	meta := make(map[string]interface{})
+	
 	_, _, err := s.nomadClient.Jobs().Scale(
 		s.cluster.GetJobID(),
 		s.cluster.GetTaskGroupName(),
 		s.cluster.GetClusterSize(),
 		"",
 		false,
-		nil,
+		meta,
 		nil,
 	)
 

@@ -109,110 +109,6 @@ func (x *SetNodeCountResponse) GetResult() bool {
 	return false
 }
 
-type SetNodeVoteRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	VotedFor      string                 `protobuf:"bytes,2,opt,name=voted_for,json=votedFor,proto3" json:"voted_for,omitempty"`
-	LogIndex      int64                  `protobuf:"varint,3,opt,name=log_index,json=logIndex,proto3" json:"log_index,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetNodeVoteRequest) Reset() {
-	*x = SetNodeVoteRequest{}
-	mi := &file_api_cluster_manager_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetNodeVoteRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetNodeVoteRequest) ProtoMessage() {}
-
-func (x *SetNodeVoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cluster_manager_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetNodeVoteRequest.ProtoReflect.Descriptor instead.
-func (*SetNodeVoteRequest) Descriptor() ([]byte, []int) {
-	return file_api_cluster_manager_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *SetNodeVoteRequest) GetUuid() string {
-	if x != nil {
-		return x.Uuid
-	}
-	return ""
-}
-
-func (x *SetNodeVoteRequest) GetVotedFor() string {
-	if x != nil {
-		return x.VotedFor
-	}
-	return ""
-}
-
-func (x *SetNodeVoteRequest) GetLogIndex() int64 {
-	if x != nil {
-		return x.LogIndex
-	}
-	return 0
-}
-
-type SetNodeVoteResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Result        bool                   `protobuf:"varint,1,opt,name=result,proto3" json:"result,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *SetNodeVoteResponse) Reset() {
-	*x = SetNodeVoteResponse{}
-	mi := &file_api_cluster_manager_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *SetNodeVoteResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*SetNodeVoteResponse) ProtoMessage() {}
-
-func (x *SetNodeVoteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_cluster_manager_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use SetNodeVoteResponse.ProtoReflect.Descriptor instead.
-func (*SetNodeVoteResponse) Descriptor() ([]byte, []int) {
-	return file_api_cluster_manager_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *SetNodeVoteResponse) GetResult() bool {
-	if x != nil {
-		return x.Result
-	}
-	return false
-}
-
 var File_api_cluster_manager_proto protoreflect.FileDescriptor
 
 const file_api_cluster_manager_proto_rawDesc = "" +
@@ -222,16 +118,9 @@ const file_api_cluster_manager_proto_rawDesc = "" +
 	"\n" +
 	"node_count\x18\x01 \x01(\x03R\tnodeCount\".\n" +
 	"\x14SetNodeCountResponse\x12\x16\n" +
-	"\x06result\x18\x01 \x01(\bR\x06result\"b\n" +
-	"\x12SetNodeVoteRequest\x12\x12\n" +
-	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1b\n" +
-	"\tvoted_for\x18\x02 \x01(\tR\bvotedFor\x12\x1b\n" +
-	"\tlog_index\x18\x03 \x01(\x03R\blogIndex\"-\n" +
-	"\x13SetNodeVoteResponse\x12\x16\n" +
-	"\x06result\x18\x01 \x01(\bR\x06result2\xe7\x01\n" +
+	"\x06result\x18\x01 \x01(\bR\x06result2}\n" +
 	"\x0eClusterManager\x12k\n" +
-	"\fSetNodeCount\x12,.cluster_manager_service.SetNodeCountRequest\x1a-.cluster_manager_service.SetNodeCountResponse\x12h\n" +
-	"\vSetNodeVote\x12+.cluster_manager_service.SetNodeVoteRequest\x1a,.cluster_manager_service.SetNodeVoteResponseB`Z^github.com/Na322Pr/cluster-manager-service/pkg/cluster-manager-service;cluster_manager_serviceb\x06proto3"
+	"\fSetNodeCount\x12,.cluster_manager_service.SetNodeCountRequest\x1a-.cluster_manager_service.SetNodeCountResponseB`Z^github.com/Na322Pr/cluster-manager-service/pkg/cluster-manager-service;cluster_manager_serviceb\x06proto3"
 
 var (
 	file_api_cluster_manager_proto_rawDescOnce sync.Once
@@ -245,20 +134,16 @@ func file_api_cluster_manager_proto_rawDescGZIP() []byte {
 	return file_api_cluster_manager_proto_rawDescData
 }
 
-var file_api_cluster_manager_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_api_cluster_manager_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_api_cluster_manager_proto_goTypes = []any{
 	(*SetNodeCountRequest)(nil),  // 0: cluster_manager_service.SetNodeCountRequest
 	(*SetNodeCountResponse)(nil), // 1: cluster_manager_service.SetNodeCountResponse
-	(*SetNodeVoteRequest)(nil),   // 2: cluster_manager_service.SetNodeVoteRequest
-	(*SetNodeVoteResponse)(nil),  // 3: cluster_manager_service.SetNodeVoteResponse
 }
 var file_api_cluster_manager_proto_depIdxs = []int32{
 	0, // 0: cluster_manager_service.ClusterManager.SetNodeCount:input_type -> cluster_manager_service.SetNodeCountRequest
-	2, // 1: cluster_manager_service.ClusterManager.SetNodeVote:input_type -> cluster_manager_service.SetNodeVoteRequest
-	1, // 2: cluster_manager_service.ClusterManager.SetNodeCount:output_type -> cluster_manager_service.SetNodeCountResponse
-	3, // 3: cluster_manager_service.ClusterManager.SetNodeVote:output_type -> cluster_manager_service.SetNodeVoteResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	1, // 1: cluster_manager_service.ClusterManager.SetNodeCount:output_type -> cluster_manager_service.SetNodeCountResponse
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -275,7 +160,7 @@ func file_api_cluster_manager_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_cluster_manager_proto_rawDesc), len(file_api_cluster_manager_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

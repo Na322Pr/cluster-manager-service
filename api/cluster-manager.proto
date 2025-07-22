@@ -7,8 +7,6 @@ option go_package = "github.com/Na322Pr/cluster-manager-service/pkg/cluster-mana
 service ClusterManager {
   // Изменяет количество нод в кластере
   rpc SetNodeCount(SetNodeCountRequest) returns (SetNodeCountResponse);
-  // Записывает данные ноды в текущем голосовании
-  rpc SetNodeVote(SetNodeVoteRequest) returns (SetNodeVoteResponse);
 }
 
 message SetNodeCountRequest{
@@ -16,15 +14,5 @@ message SetNodeCountRequest{
 }
 
 message SetNodeCountResponse{
-  bool result = 1;
-}
-
-message SetNodeVoteRequest {
-  string uuid = 1;
-  string voted_for = 2;
-  int64 log_index = 3;
-}
-
-message SetNodeVoteResponse {
   bool result = 1;
 }

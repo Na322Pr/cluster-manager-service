@@ -9,7 +9,10 @@ func (s *Implementation) SetNodeCount(
 	ctx context.Context,
 	req *desc.SetNodeCountRequest,
 ) (*desc.SetNodeCountResponse, error) {
-	//peers := s.nodeService.SeedHandleAddPeer(req.GetAddress())
+	err := s.cmService.SetClusterSize(ctx, int(req.NodeCount))
+	if err != nil {
+		return &desc.SetNodeCountResponse{}, err
+	}
 
 	return &desc.SetNodeCountResponse{
 		Result: true,
